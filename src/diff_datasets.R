@@ -8,6 +8,14 @@
 ## whatsoever. Neither the Broad Institute nor MIT can be responsible for its
 ## use, misuse, or functionality.
 
+# Check whether common.R has been loaded using read.gct as an indicator.  If not,
+# try to load it from the current directory.  This is just a workaround for using
+# the script in gp-unit contexts.  This stuff should eventually reside in packages
+# stored in one of the places R usually expects to find it.
+if (! exists("read.gct")  && file.exists("common.R")) {
+   source("common.R")
+}
+
 Diff.Datasets <- function(first.input.file, second.input.file, round.method, round.digits) {
    if (trim(first.input.file) == "") {
       stop("Missing required argument first.input.file")
