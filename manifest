@@ -1,6 +1,6 @@
+#Mon, 01 Apr 2013 12:59:56 +0900
 name=DiffDatasets
-commandLine=<R2.15_HOME>/bin/Rscript --no-save --quiet --slave --no-restore <libdir>run_diff_datasets.R <libdir> <user.dir> <patches> \
-   --first.input.file\=<first.input.file> --second.input.file\=<second.input.file> --round.method\=<round.method> <round.digits>
+commandLine=<R2.15_HOME>/bin/Rscript --no-save --quiet --slave --no-restore <libdir>run_diff_datasets.R <libdir> <user.dir> <patches> --first.input.file\=<first.input.file> --second.input.file\=<second.input.file> --round.method\=<round.method> <round.digits>
 license=
 taskDoc=DiffDatasets.pdf
 fileFormat=txt
@@ -8,7 +8,7 @@ taskType=Preprocess & Utilities
 os=any
 privacy=public
 description=Compare the contents of two datasets for differences within a tolerance (round values and compare textually). 
-version=
+version=Initial version of a utility for comparing datasets within a rounding tolerance.
 minGenePatternVersion=
 author=David Eby, Broad Institute
 
@@ -50,8 +50,5 @@ p4_prefix_when_specified=--round.digits\=
 p4_type=java.lang.Integer
 p4_value=
 
-requiredPatchLSIDs=urn\:lsid\:broadinstitute.org\:plugin\:Ant_1.8\:1,\
-   urn\:lsid\:broadinstitute.org\:plugin\:checkR_2.15\:1,\
-   urn\:lsid\:broadinstitute.org\:rlib.2.15\:getopt_1.17\:1,urn\:lsid\:broadinstitute.org\:rlib.2.15\:optparse_0.9.5\:1
-requiredPatchURLs=http\://www.broadinstitute.org/webservices/gpModuleRepository/download/prod/patch/?file\=/Ant_1_8/broadinstitute.org\:plugin/Ant_1.8/1/Ant_1_8.zip,\
-   http\://www.broadinstitute.org/webservices/gpModuleRepository/download/prod/patch/?file\=/checkR_2.15/broadinstitute.org\:plugin/checkR_2.15/1/checkR_2.15.zip,http\://www.broadinstitute.org/webservices/gpModuleRepository/download/prod/patch/?file\=/rlib.2.15_getopt_1.17/broadinstitute.org\:rlib.2.15/getopt_1.17/1/rlib.2.15_getopt_1.17.zip,http\://www.broadinstitute.org/webservices/gpModuleRepository/download/prod/patch/?file\=/rlib.2.15_optparse_0.9.5/broadinstitute.org\:rlib.2.15/optparse_0.9.5/1/rlib.2.15_optparse_0.9.5.zip
+requiredPatchLSIDs=urn\:lsid\:broadinstitute.org\:plugin\:Ant_1.8\:1,urn\:lsid\:broadinstitute.org\:plugin\:checkR_2.15\:1,urn\:lsid\:broadinstitute.org\:rlib.2.15\:getopt_1.17\:1,urn\:lsid\:broadinstitute.org\:rlib.2.15\:optparse_0.9.5\:1
+requiredPatchURLs=http\://www.broadinstitute.org/webservices/gpModuleRepository/download/prod/patch/?file\=/Ant_1_8/broadinstitute.org\:plugin/Ant_1.8/1/Ant_1_8.zip,http\://www.broadinstitute.org/webservices/gpModuleRepository/download/prod/patch/?file\=/checkR_2.15/broadinstitute.org\:plugin/checkR_2.15/1/checkR_2.15.zip,http\://www.broadinstitute.org/webservices/gpModuleRepository/download/prod/patch/?file\=/rlib.2.15_getopt_1.17/broadinstitute.org\:rlib.2.15/getopt_1.17/1/rlib.2.15_getopt_1.17.zip,http\://www.broadinstitute.org/webservices/gpModuleRepository/download/prod/patch/?file\=/rlib.2.15_optparse_0.9.5/broadinstitute.org\:rlib.2.15/optparse_0.9.5/1/rlib.2.15_optparse_0.9.5.zip
