@@ -1,6 +1,6 @@
 #Mon, 01 Apr 2013 12:59:56 +0900
 name=DiffDatasets
-commandLine=<R2.15_HOME>/bin/Rscript --no-save --quiet --slave --no-restore <libdir>run_diff_datasets.R <libdir> <user.dir> <patches> --first.input.file\=<first.input.file> --second.input.file\=<second.input.file> --round.method\=<round.method> <round.digits>
+commandLine=<R2.15_Rscript> --no-save --quiet --slave --no-restore <libdir>run_diff_datasets.R <libdir> <user.dir> <patches> --first.input.file\=<first.input.file> --second.input.file\=<second.input.file> --round.method\=<round.method> <round.digits>
 license=
 taskDoc=DiffDatasets.pdf
 fileFormat=txt
@@ -8,7 +8,7 @@ taskType=Preprocess & Utilities
 os=any
 privacy=public
 description=Compare the contents of two datasets for differences within a tolerance (round values and compare textually). 
-version=Initial version of a utility for comparing datasets within a rounding tolerance.
+version=Updates the command line for better portability.
 minGenePatternVersion=
 author=David Eby, Broad Institute
 
