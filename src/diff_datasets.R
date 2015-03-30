@@ -71,9 +71,9 @@ Diff.Datasets <- function(first.input.file, second.input.file, round.method, rou
       second.matrix <- apply(second.matrix, MARGIN=c(1,2), FUN=round.function)
    }
 
-   # Output the two datasets to text files for the subsequent diff compare.
-   first.out.file <- paste(basename(first.input.file), ".", round.method, sep="")
-   second.out.file <- paste(basename(second.input.file), ".", round.method, sep="")
+   # Output the two rounded datasets to text files for visual inspection
+   first.out.file <- paste(basename(first.input.file), ".rnd1", ".", sep="")
+   second.out.file <- paste(basename(second.input.file), ".rnd2", ".", sep="")
    if (isGct(first.input.file)) {
       first.ds$data <- first.matrix
       second.ds$data <- second.matrix
@@ -90,21 +90,18 @@ Diff.Datasets <- function(first.input.file, second.input.file, round.method, rou
       write.table(first.matrix, first.out.file, row.names=FALSE, col.names=FALSE)
       write.table(second.matrix, second.out.file, row.names=FALSE, col.names=FALSE)
    }
-   
-   # Call the system's diff command to compare these files, capturing stdout and
-   # and stderr into the named files.  Ignore line-ending differences.
-   diff.args <- c("--strip-trailing-cr", first.out.file, second.out.file)
-   status <- system2("diff", diff.args, stdout="diffs.out.txt", stderr="diffs.err.txt")
-   if (status != 0) {
-      write(paste("Differences found in files '", first.input.file, "' and '", 
-                  second.input.file, "'.", sep=""), stderr());
-      write("See diffs.out.txt for the comparison output.", stderr());
-      write(paste("See '", first.out.file, "' and '", second.out.file, 
-                  "' for the rounded data.", sep=""), stderr());
-      q("no", status=status, runLast=FALSE)
+
+   # Subtracting the second matrix from the first will result in a matrix where all values
+   # are 0 if they are identical. 
+   if (all((first.matrix - second.matrix) == 0)) {
+      write("No differences found.", stdout());
    }
    else {
-      write("No differences found.", stdout());
+      write(paste("Differences found in files '", first.input.file, "' and '", 
+                  second.input.file, "'.", sep=""), stderr());
+      write(paste("See '", first.out.file, "' and '", second.out.file, 
+                  "' for the rounded data.", sep=""), stderr());
+      q("no", status=1, runLast=FALSE)
    }
 }
 

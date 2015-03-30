@@ -8,7 +8,7 @@ taskType=Preprocess & Utilities
 os=any
 privacy=public
 description=Compare the contents of two datasets for differences within a tolerance (round values and compare textually). 
-version=Updates the command line for better portability.
+version=Removed the UNIX 'diff' dependency, making this portable to any platform supporting R.  Fixes a bad bug where comparing two files with the same name always showed no differences.
 minGenePatternVersion=
 author=David Eby, Broad Institute
 
