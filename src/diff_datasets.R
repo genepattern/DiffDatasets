@@ -1,6 +1,6 @@
 ## The Broad Institute
 ## SOFTWARE COPYRIGHT NOTICE AGREEMENT
-## This software and its documentation are copyright (2013) by the
+## This software and its documentation are copyright (2015) by the
 ## Broad Institute/Massachusetts Institute of Technology. All rights are
 ## reserved.
 ##
@@ -53,16 +53,14 @@ Diff.Datasets <- function(first.input.file, second.input.file, round.method, rou
    }
    else if (isCsv(first.input.file)) {
       # Assuming US-style CSVs with ',' separator and '.' decimal.
-      # We turn off the automatic handling of headers and row naming in order
-      # to have more control over the diffs 
-      first.matrix <- read.csv(first.input.file,header=FALSE,row.names=NULL)
-      second.matrix <- read.csv(second.input.file,header=FALSE,row.names=NULL)
+      first.matrix <- read.csv(first.input.file)
+      second.matrix <- read.csv(second.input.file)
    }
    else {
       # otherwise we'll just take a stab at loading these as whatever else can be 
-      # handled by read.table with (mostly) the default settings.
-      first.matrix <- read.table(first.input.file,header=FALSE,row.names=NULL)
-      second.matrix <- read.table(second.input.file,header=FALSE,row.names=NULL)
+      # handled by read.table with the default settings.
+      first.matrix <- read.table(first.input.file)
+      second.matrix <- read.table(second.input.file)
    }
    
    # If provided, apply the round.function across the datasets (processing numerics only)
@@ -71,9 +69,9 @@ Diff.Datasets <- function(first.input.file, second.input.file, round.method, rou
       second.matrix <- apply(second.matrix, MARGIN=c(1,2), FUN=round.function)
    }
 
-   # Output the two rounded datasets to text files for visual inspection
-   first.out.file <- paste(basename(first.input.file), ".rnd1", ".", sep="")
-   second.out.file <- paste(basename(second.input.file), ".rnd2", ".", sep="")
+   # Output the two rounded datasets to text files to allow for visual inspection
+   first.out.file <- paste(basename(first.input.file), ".rnd1", sep="")
+   second.out.file <- paste(basename(second.input.file), ".rnd2", sep="")
    if (isGct(first.input.file)) {
       first.ds$data <- first.matrix
       second.ds$data <- second.matrix
@@ -91,9 +89,20 @@ Diff.Datasets <- function(first.input.file, second.input.file, round.method, rou
       write.table(second.matrix, second.out.file, row.names=FALSE, col.names=FALSE)
    }
 
+   # Check the row/column labels first
+   labels.match <- FALSE
+   if (isRes(first.input.file)) {
+      labels.match <- all(first.ds$column.descriptions == second.ds$column.descriptions) &&
+                      all(first.ds$row.descriptions == second.ds$row.descriptions)
+   }
+   else {
+      labels.match <- all(colnames(first.matrix) == colnames(second.matrix)) &&
+                      all(rownames(first.matrix) == rownames(second.matrix))
+   }
+
    # Subtracting the second matrix from the first will result in a matrix where all values
    # are 0 if they are identical. 
-   if (all((first.matrix - second.matrix) == 0)) {
+   if (labels.match && all((first.matrix - second.matrix) == 0)) {
       write("No differences found.", stdout());
    }
    else {
