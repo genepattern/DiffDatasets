@@ -59,8 +59,8 @@ Diff.Datasets <- function(first.input.file, second.input.file, round.method, rou
    else {
       # otherwise we'll just take a stab at loading these as whatever else can be 
       # handled by read.table with the default settings.
-      first.matrix <- read.table(first.input.file)
-      second.matrix <- read.table(second.input.file)
+      first.matrix <- read.table(first.input.file, fill=TRUE, colClasses="numeric")
+      second.matrix <- read.table(second.input.file, fill=TRUE, colClasses="numeric")
    }
    
    # If provided, apply the round.function across the datasets (processing numerics only)
