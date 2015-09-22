@@ -8,7 +8,7 @@ taskType=Preprocess & Utilities
 os=any
 privacy=public
 description=Compare the contents of two datasets for differences within a tolerance (round values and compare textually). 
-version=Modified to check the row and column labels for diffs.  Added an R script that can be called from gpunit; this is still not fully portable but is closer than the previous one.
+version=Modified to better handle ragged TXT files (with non-equal row lengths) and missing values.
 minGenePatternVersion=
 author=David Eby, Broad Institute
 
