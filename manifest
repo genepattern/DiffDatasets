@@ -8,7 +8,7 @@ taskType=Preprocess & Utilities
 os=any
 privacy=public
 description=Compare the contents of two datasets for differences within a tolerance (round values and compare textually). 
-version=Modified to better handle ragged TXT files (with non-equal row lengths) and missing values.
+version=Updated to make use of the R package installer.
 minGenePatternVersion=
 author=David Eby, Broad Institute
 
