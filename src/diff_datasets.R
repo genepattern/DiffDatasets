@@ -1,6 +1,6 @@
 ## The Broad Institute
 ## SOFTWARE COPYRIGHT NOTICE AGREEMENT
-## This software and its documentation are copyright (2015) by the
+## This software and its documentation are copyright (2021) by the
 ## Broad Institute/Massachusetts Institute of Technology. All rights are
 ## reserved.
 ##
@@ -16,7 +16,12 @@ if (! exists("read.gct")  && file.exists("common.R")) {
    source("common.R")
 }
 
-Diff.Datasets <- function(first.input.file, second.input.file, round.method, round.digits) {
+isRnk <- function(file.name) {
+    return (regexpr("\\.rnk$", tolower(file.name))[[1]] != -1)
+}
+
+
+Diff.Datasets <- function(first.input.file, second.input.file, round.method, round.digits, comp.tolerance) {
    if (trim(first.input.file) == "") {
       stop("Missing required argument first.input.file")
    }
@@ -38,6 +43,8 @@ Diff.Datasets <- function(first.input.file, second.input.file, round.method, rou
       stop(paste("Received unknown rounding method '", round.method, "'", sep=""))
    }
 
+   comp.tolerance <- require.numeric.or.default(comp.tolerance, "comp.tolerance", 0.00001)
+
    # Load up the datasets.  We'll use the first input file as a basis for 
    # determining whether to use read.dataset and assume that for both files
    # (and likewise for CSV files); if it's not true then they won't diff anyway.
@@ -56,17 +63,37 @@ Diff.Datasets <- function(first.input.file, second.input.file, round.method, rou
       first.matrix <- read.csv(first.input.file)
       second.matrix <- read.csv(second.input.file)
    }
+   else if (isRnk(first.input.file)) {
+      first.matrix <- read.table(first.input.file, fill=TRUE, quote="", sep="\t", row.names = 1)
+      second.matrix <- read.table(second.input.file, fill=TRUE, quote="", sep="\t", row.names = 1)
+      
+      # For an RNK file, any ties may be in arbitrary order so we reorder the first to match the second.
+      # Note that we also make sure both have the same dimensions beforehand.
+      if (any(dim(first.matrix) != dim(second.matrix))) {
+         stop(paste("The dimensions of these two datasets do not match, which is required for comparison"))
+      }
+      fixLabelOrder <- match(rownames(first.matrix), rownames(second.matrix))
+      if (length(fixLabelOrder) != nrow(second.matrix)) {
+         stop(paste("The labels of these two datasets do not match, which is required for comparison"))
+      }
+      first.matrix <- as.data.frame(first.matrix[fixLabelOrder,])
+      colnames(first.matrix) <- colnames(second.matrix)
+   }
    else {
       # otherwise we'll just take a stab at loading these as whatever else can be 
       # handled by read.table with the default settings.
-      first.matrix <- read.table(first.input.file, fill=TRUE, colClasses="numeric")
-      second.matrix <- read.table(second.input.file, fill=TRUE, colClasses="numeric")
+      first.matrix <- read.table(first.input.file, fill=TRUE)
+      second.matrix <- read.table(second.input.file, fill=TRUE)
+   }
+   
+   if (any(dim(first.matrix) != dim(second.matrix))) {
+      stop(paste("The dimensions of these two datasets do not match, which is required for comparison"))
    }
    
    # If provided, apply the round.function across the datasets (processing numerics only)
    if (!is.null(round.function)) {
-      first.matrix <- apply(first.matrix, MARGIN=c(1,2), FUN=round.function)
-      second.matrix <- apply(second.matrix, MARGIN=c(1,2), FUN=round.function)
+       first.matrix <- apply(first.matrix, MARGIN=c(1,2), FUN=round.function)
+       second.matrix <- apply(second.matrix, MARGIN=c(1,2), FUN=round.function)
    }
 
    # Output the two rounded datasets to text files to allow for visual inspection
@@ -84,9 +111,13 @@ Diff.Datasets <- function(first.input.file, second.input.file, round.method, rou
       write.res(first.ds, first.out.file, check.file.extension=FALSE)
       write.res(second.ds, second.out.file, check.file.extension=FALSE)
    }
+   else if (isRnk(first.input.file)) {
+      write.table(first.matrix, first.out.file, col.names=FALSE, quote=FALSE, sep="\t")
+      write.table(second.matrix, second.out.file, col.names=FALSE, quote=FALSE, sep="\t")
+   }
    else {
-      write.table(first.matrix, first.out.file, row.names=FALSE, col.names=FALSE)
-      write.table(second.matrix, second.out.file, row.names=FALSE, col.names=FALSE)
+      write.table(first.matrix, first.out.file, row.names=FALSE, col.names=FALSE, quote=FALSE)
+      write.table(second.matrix, second.out.file, row.names=FALSE, col.names=FALSE, quote=FALSE)
    }
 
    # Check the row/column labels first
@@ -100,10 +131,13 @@ Diff.Datasets <- function(first.input.file, second.input.file, round.method, rou
                       all(rownames(first.matrix) == rownames(second.matrix))
    }
 
-   # Subtracting the second matrix from the first will result in a matrix where all values
-   # are 0 if they are identical. 
-   if (labels.match && all((first.matrix - second.matrix) == 0)) {
-      write("No differences found.", stdout());
+   # Subtracting the second matrix from the first will result in a matrix considered a match
+   # if all values are within the given tolerance.
+   if (!labels.match) {
+      stop(paste("The labels of these two datasets do not match, which is required for comparison"))
+   }
+   else if (all(abs(first.matrix - second.matrix) <= comp.tolerance)) {
+      write("Both datasets are within tolerance.", stdout());
    }
    else {
       write(paste("Differences found in files '", first.input.file, "' and '", 

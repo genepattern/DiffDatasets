@@ -1,6 +1,6 @@
 #Mon, 01 Apr 2013 12:59:56 +0900
 name=DiffDatasets
-commandLine=<R2.15_Rscript> --no-save --quiet --slave --no-restore <libdir>run_diff_datasets.R <libdir> --first.input.file\=<first.input.file> --second.input.file\=<second.input.file> --round.method\=<round.method> <round.digits>
+commandLine=<R2.15_Rscript> --no-save --quiet --slave --no-restore <libdir>run_diff_datasets.R <libdir> --first.input.file\=<first.input.file> --second.input.file\=<second.input.file> --round.method\=<round.method> <round.digits> <comp.tolerance>
 license=
 taskDoc=DiffDatasets.pdf
 fileFormat=txt
@@ -49,6 +49,14 @@ p4_optional=on
 p4_prefix_when_specified=--round.digits\=
 p4_type=java.lang.Integer
 p4_value=
+
+p5_default_value=0.00001
+p5_description=The tolerance for the match.  Defaults to 0.00001
+p5_name=comp.tolerance
+p5_optional=on
+p5_prefix_when_specified=--tolerance\=
+p5_type=java.lang.Integer
+p5_value=
 
 requiredPatchLSIDs=
 requiredPatchURLs=
